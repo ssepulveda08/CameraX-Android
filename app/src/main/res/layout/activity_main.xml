@@ -7,17 +7,27 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <ImageView
-        android:id="@+id/camera_capture_button"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+    <com.example.camerax.ui.views.RippleView
+        android:id="@+id/ripple_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="50dp"
-        android:background="@drawable/ic_circle"
+        android:padding="30dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:focusable="true"
-        android:elevation="2dp" />
+        app:rv_color="@color/red"
+        app:rv_radius="15dp"
+        app:rv_scale="5"
+        app:rv_type="fill_and_stroke"
+        android:elevation="2dp">
+
+        <ImageView
+            android:id="@+id/camera_capture_button"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/ic_circle" />
+    </com.example.camerax.ui.views.RippleView>
 
     <ImageView
         android:id="@+id/change_camera"
@@ -30,11 +40,11 @@
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/camera_capture_button"
+        app:layout_constraintEnd_toStartOf="@+id/ripple_view"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/camera_capture_button"
+        app:layout_constraintTop_toTopOf="@+id/ripple_view"
         app:srcCompat="@drawable/ic_baseline_flip_camera_ios_24"
         app:tint="@color/purple_200" />
 

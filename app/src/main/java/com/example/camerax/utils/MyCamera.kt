@@ -56,7 +56,6 @@ class MyCamera(
     }
 
     override fun onTakePhoto() {
-        Toast.makeText(context, "Take Photo", Toast.LENGTH_SHORT).show()
         // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
 
@@ -99,8 +98,6 @@ class MyCamera(
         if (videoCapture == null) return
 
         captureVideo = true
-
-        Toast.makeText(context, "Start Video", Toast.LENGTH_SHORT).show()
         val videoFile = File(
             outputDirectory,
             SimpleDateFormat(
@@ -134,7 +131,6 @@ class MyCamera(
     override fun onStopVideo() {
         if (videoCapture == null) return
         captureVideo = false
-        Toast.makeText(context, "Stop Video", Toast.LENGTH_SHORT).show()
         videoCapture?.stopRecording()
     }
 
@@ -198,7 +194,7 @@ class MyCamera(
     }
 
     private fun getOutputDirectory(): File {
-        val mediaDir = File(path, "CameraTest")
+        val mediaDir = File(path, "filesDir")
         mediaDir.mkdirs()
         Log.d(TAG, " Create Folder: ${mediaDir.exists()}")
         return if (mediaDir.exists())

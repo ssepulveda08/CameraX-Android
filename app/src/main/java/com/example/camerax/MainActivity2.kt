@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import com.example.camerax.databinding.ActivityMainBinding
 import com.example.camerax.utils.CameraListener
 import com.example.camerax.utils.MyCamera
+import java.io.File
 
 
 class MainActivity2 : AppCompatActivity(), CameraListener {
@@ -35,6 +36,7 @@ class MainActivity2 : AppCompatActivity(), CameraListener {
 
         binding.cameraCaptureButton.setOnClickListener {
             if (camera.isTakingVideoNow()) {
+                endEffectButton()
                 camera.onStopVideo()
             } else {
                 camera.onTakePhoto()
@@ -43,6 +45,7 @@ class MainActivity2 : AppCompatActivity(), CameraListener {
         binding.cameraCaptureButton.setOnLongClickListener {
             if (!camera.isTakingVideoNow()) {
                 camera.onTakeVideo()
+                startEffectButton()
             }
             true
         }
@@ -50,13 +53,35 @@ class MainActivity2 : AppCompatActivity(), CameraListener {
 
     }
 
+    private fun startEffectButton() {
+        binding.rippleView.newRipple()
+        val colorRed = ContextCompat.getColor(baseContext, R.color.red)
+        val drawable = ContextCompat.getDrawable(baseContext, R.drawable.ic_circle)?.apply {
+            setTint(colorRed)
+        }
+        drawable?.let {
+            binding.cameraCaptureButton.background = it
+        }
+    }
+
+    private fun endEffectButton() {
+        val drawable = ContextCompat.getDrawable(baseContext, R.drawable.ic_circle)
+        drawable?.let {
+            binding.cameraCaptureButton.background = it
+        }
+    }
+
     private fun startCamera() {
+       // val imagePath = File(filesDir, "my_images")
+        val folder = externalMediaDirs.firstOrNull()?.let {
+            it
+        } ?: filesDir
         camera = MyCamera(
-            this,
-            binding.previewView.surfaceProvider,
-            this,
-            this.externalMediaDirs.first(),
-            this
+            context = this,
+            preview = binding.previewView.surfaceProvider,
+            lifecycleOwner = this,
+            path = folder,
+            listener = this
         )
         camera.initCamera()
     }
