@@ -1,4 +1,4 @@
-package com.example.camerax
+package com.example.camerax.analyzers
 
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -21,7 +21,7 @@ class LuminosityAnalyzer(private val listener: (Double) -> Unit) : ImageAnalysis
         val pixels = data.map { it.toInt() and 0xFF }
         val luma = pixels.average()
 
-        listener(luma)
+        listener.invoke(luma)
 
         image.close()
     }

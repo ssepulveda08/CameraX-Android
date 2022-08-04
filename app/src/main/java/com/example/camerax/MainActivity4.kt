@@ -3,28 +3,28 @@ package com.example.camerax
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.VideoCapture
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
+import com.example.camera.userCase.TakeVideoAnalyzer
+import com.example.camerax.analyzers.LuminosityAnalyzer
+import com.example.camerax.analyzers.PoseDetectorAnalyzer
 import com.example.camerax.databinding.ActivityMainBinding
-import com.example.camerax.utils.CameraListener
-import com.example.camerax.utils.MyCamera
-import java.io.File
 
-
-class MainActivity2 : AppCompatActivity(), CameraListener {
+class MainActivity4 : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var camera: MyCamera
+    private lateinit var camera: TakeVideoAnalyzer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.cameraCaptureButton.isVisible = false
 
         if (isAllPermissionsGranted()) {
             startCamera()
@@ -33,56 +33,26 @@ class MainActivity2 : AppCompatActivity(), CameraListener {
                 this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS,
             )
         }
-
-        binding.cameraCaptureButton.setOnClickListener {
-            if (camera.isTakingVideoNow()) {
-                endEffectButton()
-                camera.onStopVideo()
-            } else {
-                camera.onTakePhoto()
-            }
-        }
-        binding.cameraCaptureButton.setOnLongClickListener {
-            if (!camera.isTakingVideoNow()) {
-                camera.onTakeVideo()
-                startEffectButton()
-            }
-            true
-        }
-        binding.changeCamera.setOnClickListener { camera.onSwitchCamera() }
-
-    }
-
-    private fun startEffectButton() {
-        binding.rippleView.newRipple()
-        val colorRed = ContextCompat.getColor(baseContext, R.color.red)
-        val drawable = ContextCompat.getDrawable(baseContext, R.drawable.ic_circle)?.apply {
-            setTint(colorRed)
-        }
-        drawable?.let {
-            binding.cameraCaptureButton.background = it
-        }
-    }
-
-    private fun endEffectButton() {
-        val drawable = ContextCompat.getDrawable(baseContext, R.drawable.ic_circle)
-        drawable?.let {
-            binding.cameraCaptureButton.background = it
+        binding.changeCamera.setOnClickListener {
+            binding.containerDrawView.removeAllViews()
+            camera.onSwitchCamera()
         }
     }
 
     private fun startCamera() {
-       // val imagePath = File(filesDir, "my_images")
-        val folder = externalMediaDirs.firstOrNull()?.let {
-            it
-        } ?: filesDir
-        camera = MyCamera(
+        val poseDetector = PoseDetectorAnalyzer(baseContext, binding.containerDrawView)
+        val luminosity = LuminosityAnalyzer() {
+            Log.d("LuminosityAnalyzer", "Luminosity: $it")
+
+        }
+        camera = TakeVideoAnalyzer(
             context = this,
             preview = binding.previewView.surfaceProvider,
             lifecycleOwner = this,
-            path = folder,
-            listener = this
-        )
+            arrayOf(poseDetector, luminosity)
+        ) {
+            Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+        }
         camera.initCamera()
     }
 
@@ -106,24 +76,11 @@ class MainActivity2 : AppCompatActivity(), CameraListener {
         }
     }
 
-    override fun onPhotoTakeSuccessfully(results: ImageCapture.OutputFileResults) {
-
-    }
-
-    override fun onVideoTakeSuccessfully(results: VideoCapture.OutputFileResults) {
-
-    }
-
-    override fun onCameraError(throwable: Throwable) {
-
-    }
-
     private fun isAllPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
             this, it
         ) == PackageManager.PERMISSION_GRANTED
     }
-
 
     companion object {
         private const val REQUEST_CODE_PERMISSIONS = 10

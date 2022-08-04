@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CameraX">
         <activity
-            android:name=".MainActivity2"
+            android:name=".MainActivity4"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,6 +35,10 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />
         </provider>
+
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="face" />
     </application>
 
 </manifest>
